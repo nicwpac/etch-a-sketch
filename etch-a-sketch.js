@@ -8,12 +8,10 @@ const grid = document.querySelector("#grid");
 
 const rowInput = document.querySelector("#input-grid-row");
 rowInput.addEventListener("change", () => {
-    //maxRowCount = clampDimension(rowInput);
     onDimensionChange();
 });
 const columnInput = document.querySelector("#input-grid-column");
 columnInput.addEventListener("change", () => {
-    //maxColumnCount = clampDimension(columnInput);
     onDimensionChange();
 });
 
@@ -24,7 +22,7 @@ window.addEventListener("mousedown", () => mouseIsDown = true);
 window.addEventListener("mouseup", () => mouseIsDown = false);
 window.addEventListener("dragStart", (event) => event.preventDefault());
 
-function createGrid(rows, columns) {
+function createGrid() {
     grid.replaceChildren();
     maxRowCount = clampDimension(rowInput);
     maxColumnCount = clampDimension(columnInput);
@@ -32,11 +30,11 @@ function createGrid(rows, columns) {
 
     let newGridSquares = [];
 
-    for (let i = 0; i < rows; i++) {
+    for (let i = 0; i < maxRowCount; i++) {
         let row = document.createElement("div");
         row.classList.add("row");
         grid.append(row);
-        for (let j = 0; j < columns; j++) {
+        for (let j = 0; j < maxColumnCount; j++) {
             const gridSquare = document.createElement("div");
             gridSquare.classList.add("grid-square");
 
@@ -45,8 +43,8 @@ function createGrid(rows, columns) {
             const gs = getComputedStyle(grid);
             let paddingOffsetWidth = parseFloat(gs.paddingLeft) + parseFloat(gs.paddingRight);
             let paddingOffsetHeight = parseFloat(gs.paddingTop) + parseFloat(gs.paddingBottom);
-            let length = Math.min((grid.clientWidth - paddingOffsetWidth) / columns, 
-                (grid.clientHeight - paddingOffsetHeight) / rows);
+            let length = Math.min((grid.clientWidth - paddingOffsetWidth) / maxColumnCount, 
+                (grid.clientHeight - paddingOffsetHeight) / maxRowCount);
             
             gridSquare.style.width = length + "px";
             gridSquare.style.height = length + "px";
@@ -54,12 +52,10 @@ function createGrid(rows, columns) {
             gridSquare.addEventListener("mouseenter", () => {
                 if (mouseIsDown) {
                     const match = gridSquares.find(([square, row, column]) => row == i && column == j);
-                    console.log("match = " + match);
                     const oldSquare = match ? match[0] : null; 
                     
                     if (oldSquare) {
                         const oldColour = (getComputedStyle(oldSquare).backgroundColor).replace(/[^\d,.]/g, '').split(',');
-                        console.log("oldColour = " + oldColour);
                         gridSquare.style.backgroundColor = gridSquareOnHover(oldColour[3]);
                     }
                     else
@@ -98,7 +94,6 @@ function gridSquareOnHover(oldAlpha) {
     const a = parseFloat(oldAlpha) + .1; 
     
     const result = `rgba(${r}, ${g}, ${b}, ${a})`;
-    console.log(result);
     return result;
 }
 
